@@ -1,0 +1,84 @@
+const int segmentPinleri[] = {2, 3, 4, 5, 6, 7, 8};
+const int digit1_Pin = 10;
+const int digit2_Pin = 11;
+
+const byte rakamlar[10][7] = {
+  {1,1,1,1,1,1,0},
+  {0,1,1,0,0,0,0},
+  {1,1,0,1,1,0,1},
+  {1,1,1,1,0,0,1},
+  {0,1,1,0,0,1,1},
+  {1,0,1,1,0,1,1},
+  {1,0,1,1,1,1,1},
+  {1,1,1,0,0,0,0},
+  {1,1,1,1,1,1,1},
+  {1,1,1,1,0,1,1}
+};
+
+int mevcutSayi = 0;
+int yon = 1;
+int hiz = 1000;
+
+unsigned long sonSaymaZamani = 0;
+
+void setup() {
+  Serial.begin(9600);
+  
+  for(int i=0; i<7; i++) {
+    pinMode(segmentPinleri[i], OUTPUT);
+  }
+  pinMode(digit1_Pin, OUTPUT);
+  pinMode(digit2_Pin, OUTPUT);
+  
+  Serial.println("Format: Sayi,Yon(1-0),Hiz");
+  Serial.println("Ornek: 25,1,500");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    mevcutSayi = Serial.parseInt();
+    yon = Serial.parseInt();
+    hiz = Serial.parseInt();
+    
+    while(Serial.available()) Serial.read();
+    
+    Serial.print("Yeni Ayarlar -> Sayi: "); Serial.print(mevcutSayi);
+    Serial.print(" Yon: "); Serial.print(yon);
+    Serial.print(" Hiz: "); Serial.println(hiz);
+  }
+
+  if (millis() - sonSaymaZamani >= hiz) {
+    sonSaymaZamani = millis();
+    
+    if (yon == 1) {
+      mevcutSayi++;
+      if (mevcutSayi > 99) mevcutSayi = 0;
+    } else {
+      mevcutSayi--;
+      if (mevcutSayi < 0) mevcutSayi = 99;
+    }
+  }
+
+  ekranaYaz(mevcutSayi);
+}
+
+void ekranaYaz(int sayi) {
+  int onlar = sayi / 10;
+  int birler = sayi % 10;
+  
+  digitalWrite(digit1_Pin, LOW);
+  digitalWrite(digit2_Pin, HIGH);
+  rakamGoster(onlar);
+  delay(5);
+
+  digitalWrite(digit1_Pin, HIGH);
+  digitalWrite(digit2_Pin, LOW);
+  rakamGoster(birler);
+  delay(5);
+}
+
+void rakamGoster(int rakam) {
+  for (int i = 0; i < 7; i++) {
+    digitalWrite(segmentPinleri[i], rakamlar[rakam][i]);
+  }
+}
