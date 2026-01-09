@@ -1,0 +1,30 @@
+const int buzzerPin = 8;
+
+void setup() {
+  pinMode(buzzerPin, OUTPUT);
+}
+
+void loop() {
+  ozelTone(buzzerPin, 262, 500); // Do notasi
+  delay(500);
+  
+  ozelTone(buzzerPin, 294, 500); // Re notasi
+  delay(500);
+  
+  ozelTone(buzzerPin, 330, 500); // Mi notasi
+  delay(1000);
+}
+
+void ozelTone(int pin, int frekans, int sure) {
+  long yarimPeriyot = 1000000L / (2 * frekans);
+  long bitisZamani = millis() + sure;
+
+  while (millis() < bitisZamani) {
+    digitalWrite(pin, HIGH);
+    delayMicroseconds(yarimPeriyot);
+    digitalWrite(pin, LOW);
+    delayMicroseconds(yarimPeriyot);
+  }
+  
+  digitalWrite(pin, LOW);
+}
