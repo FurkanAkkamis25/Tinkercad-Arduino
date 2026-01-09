@@ -1,0 +1,85 @@
+const int ledPinleri[] = {2, 3, 4, 5, 6, 7, 8, 9};
+const int butonPini = 10;
+
+int calismaModu = 1;
+// 2 yaparsak b şıkkı çalışacak
+int butonDurumu = 0;
+int eskiButonDurumu = 0;
+int sayac = 0;
+
+unsigned long baslamaZamani = 0;
+unsigned long gecenSure = 0;
+int secilenMod = 0;
+
+void setup() {
+  for (int i = 0; i < 8; i++) {
+    pinMode(ledPinleri[i], OUTPUT);
+  }
+  
+  pinMode(butonPini, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  butonDurumu = digitalRead(butonPini);
+
+  if (calismaModu == 1) {
+    if (butonDurumu == HIGH && eskiButonDurumu == LOW) {
+      sayac++;
+      if (sayac > 4) {
+        sayac = 1;
+      }
+      Serial.print("Mod A - Tiklama: ");
+      Serial.println(sayac);
+      formlariUygula(sayac);
+      delay(50);
+    }
+  } 
+  else {
+    if (butonDurumu == HIGH && eskiButonDurumu == LOW) {
+      baslamaZamani = millis();
+    }
+    if (butonDurumu == LOW && eskiButonDurumu == HIGH) {
+      gecenSure = millis() - baslamaZamani;
+      
+      if (gecenSure >= 1000 && gecenSure < 2000) secilenMod = 1;
+      else if (gecenSure >= 2000 && gecenSure < 3000) secilenMod = 2;
+      else if (gecenSure >= 3000 && gecenSure < 4000) secilenMod = 3;
+      else if (gecenSure >= 4000) secilenMod = 4;
+      
+      Serial.print("Mod B - Sure: ");
+      Serial.println(gecenSure);
+      formlariUygula(secilenMod);
+    }
+  }
+
+  eskiButonDurumu = butonDurumu;
+  delay(10);
+}
+
+void formlariUygula(int secilenForm) {
+  for (int i = 0; i < 8; i++) {
+    digitalWrite(ledPinleri[i], LOW);
+  }
+
+  if (secilenForm == 1) {
+    for (int i = 0; i < 4; i++) {
+      digitalWrite(ledPinleri[i], HIGH);
+    }
+  }
+  else if (secilenForm == 2) {
+    for (int i = 4; i < 8; i++) {
+      digitalWrite(ledPinleri[i], HIGH);
+    }
+  }
+  else if (secilenForm == 3) {
+    for (int i = 0; i < 8; i += 2) {
+      digitalWrite(ledPinleri[i], HIGH);
+    }
+  }
+  else if (secilenForm == 4) {
+    for (int i = 1; i < 8; i += 2) {
+      digitalWrite(ledPinleri[i], HIGH);
+    }
+  }
+}
