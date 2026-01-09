@@ -1,0 +1,23 @@
+const int butonPini = 2;
+const int ledPini = 8;
+
+int ledDurumu = 0;
+int oncekiButonDurumu = 0;
+int anlikButonDurumu = 0;
+
+void setup() {
+  pinMode(ledPini, OUTPUT);
+  pinMode(butonPini, INPUT);
+}
+
+void loop() {
+  anlikButonDurumu = digitalRead(butonPini);
+
+  if (anlikButonDurumu == HIGH && oncekiButonDurumu == LOW) {
+    ledDurumu = 1 - ledDurumu;
+    digitalWrite(ledPini, ledDurumu);
+    delay(50);
+  }
+
+  oncekiButonDurumu = anlikButonDurumu;
+}
